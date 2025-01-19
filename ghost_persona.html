@@ -96,14 +96,6 @@
             background-color: #2a4444;
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
         }
-
-        #result {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #232323;
-            border-radius: 10px;
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -231,7 +223,6 @@
 
             <button type="submit">Summon Ghost 👻</button>
         </form>
-        <div id="result"></div>
     </div>
 
     <script>
@@ -299,10 +290,13 @@
         }
 
         // Form submission handler
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(form);
-            const result = document.getElementById('result');
+            
+            // Disable the submit button to prevent double submission
+            submitButton.disabled = true;
+            submitButton.textContent = "Summoning...";
             
             // Process form data and determine ghost type
             const ghostType = determineGhostType(formData);
@@ -330,25 +324,34 @@
             // Store updated data back in sessionStorage
             sessionStorage.setItem('ghostData', JSON.stringify(ghostData));
             
-            // Display result
-            result.style.display = 'block';
-            result.innerHTML = `
-                <h3 style="color: #00ffff;">Your Ghost Profile</h3>
-                <p>${ghostType}</p>
-                <button onclick="window.location.href='chat.html'" style="
-                    background-color: #1f3333;
-                    color: #00ffff;
-                    border: 1px solid rgba(0, 255, 255, 0.2);
-                    padding: 15px 30px;
-                    border-radius: 25px;
-                    cursor: pointer;
-                    font-size: 18px;
-                    margin-top: 20px;
-                    font-family: 'Courier New', monospace;
-                    transition: all 0.3s ease;
-                ">Start Chatting 💬</button>
-            `;
+            // Generate and store the ghost persona
+            const persona = generateGhostPersona(ghostData);
+            sessionStorage.setItem('ghostPersona', persona);
+            
+            // Redirect to chat page
+            window.location.href = '/chat';
         });
+
+        function generateGhostPersona(ghostData) {
+            const ghost = ghostData.summonedGhost;
+            let persona = '';
+
+            if (ghost.type === 'real') {
+                persona = `You are the ghost of ${ghost.characterName}. You should embody this historical or fictional character's personality and mannerisms. Share stories and insights from your life and afterlife experiences.`;
+            } else {
+                const characteristics = ghost.characteristics;
+                persona = `You are a ${ghost.details}\n\n`;
+                persona += `Your characteristics:\n`;
+                persona += `- Your overall vibe is ${characteristics.vibe}\n`;
+                persona += `- You primarily interact by ${characteristics.interaction}\n`;
+                persona += `- Your connection to the past involves ${characteristics.connection}\n`;
+                persona += `- Your appearance is ${characteristics.appearance}\n`;
+                persona += `- You bring a ${characteristics.mood} mood to interactions\n\n`;
+                persona += `Maintain these traits consistently in your responses and interactions.`;
+            }
+
+            return persona;
+        }
 
         function determineGhostType(formData) {
             const choice = formData.get('initialChoice');
