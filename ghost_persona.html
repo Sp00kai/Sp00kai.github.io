@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Persona Customization</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #2d2d2d;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
+            padding: 30px;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            font-size: 24px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .question-group {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #232323;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            display: none;
+        }
+
+        .question-group.active {
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+
+        .radio-option {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .radio-option:hover {
+            background-color: #404040;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #404040;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 5px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+        }
+
+        button {
+            background-color: #1f3333;
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+            width: 200px;
+        }
+
+        button:hover {
+            background-color: #2a4444;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #232323;
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            👻 Ghost Persona Customization
+        </div>
+        <form id="ghostForm">
+            <div class="question-group active" id="initialChoice">
+                <label>Do you want to speak to a ghost in your vicinity, create a new ghost, or speak to a ghost based on a real character?</label>
+                <div class="radio-option">
+                    <input type="radio" id="choice_real" name="initialChoice" value="real">
+                    <label for="choice_real">Real character (e.g., Mary Antoinette, Casper, Moaning Myrtle)</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="choice_create" name="initialChoice" value="create">
+                    <label for="choice_create">Create me a ghost</label>
+                </div>
+            </div>
+
+            <div class="question-group" id="realCharacter">
+                <label for="characterName">Who is the ghost you want to speak to?</label>
+                <input type="text" id="characterName" name="characterName" placeholder="Enter the name of a famous deceased person or fictional ghost...">
+            </div>
+
+            <div class="question-group" id="ghostVibe">
+                <label>What kind of vibe should your ghost have?</label>
+                <div class="radio-option">
+                    <input type="radio" id="vibe_friendly" name="ghostVibe" value="friendly">
+                    <label for="vibe_friendly">Friendly and comforting</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="vibe_playful" name="ghostVibe" value="playful">
+                    <label for="vibe_playful">Playful and mischievous</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="vibe_mysterious" name="ghostVibe" value="mysterious">
+                    <label for="vibe_mysterious">Mysterious and eerie or angry</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="vibe_deep" name="ghostVibe" value="deep">
+                    <label for="vibe_deep">Deep and thought-provoking</label>
+                </div>
+            </div>
+
+            <div class="question-group" id="interaction">
+                <label>How should the ghost interact with you?</label>
+                <div class="radio-option">
+                    <input type="radio" id="interact_advice" name="interaction" value="advice">
+                    <label for="interact_advice">Offer advice and guidance</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="interact_stories" name="interaction" value="stories">
+                    <label for="interact_stories">Tell stories or riddles for fun</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="interact_spooky" name="interaction" value="spooky">
+                    <label for="interact_spooky">Create spooky or dramatic encounters</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="interact_cryptic" name="interaction" value="cryptic">
+                    <label for="interact_cryptic">Share cryptic clues or reflections on life and death</label>
+                </div>
+            </div>
+
+            <div class="question-group" id="connection">
+                <label>What is the ghost's connection to its past?</label>
+                <div class="radio-option">
+                    <input type="radio" id="past_closure" name="connection" value="closure">
+                    <label for="past_closure">Seeking closure for unfinished business</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="past_memories" name="connection" value="memories">
+                    <label for="past_memories">Reliving memories from a distant era</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="past_guarding" name="connection" value="guarding">
+                    <label for="past_guarding">Guarding a location or object</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="past_cultural" name="connection" value="cultural">
+                    <label for="past_cultural">Tied to a specific cultural or mythical tradition</label>
+                </div>
+            </div>
+
+            <div class="question-group" id="appearance">
+                <label>How visually striking is the ghost?</label>
+                <div class="radio-option">
+                    <input type="radio" id="visual_subtle" name="appearance" value="subtle">
+                    <label for="visual_subtle">Subtle, like a faint glow or shadow</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="visual_whimsical" name="appearance" value="whimsical">
+                    <label for="visual_whimsical">Whimsical, with quirky or humorous features</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="visual_dramatic" name="appearance" value="dramatic">
+                    <label for="visual_dramatic">Dramatic, with eerie or intimidating traits</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="visual_unique" name="appearance" value="unique">
+                    <label for="visual_unique">Unique, like tied to an element, object, or environment</label>
+                </div>
+            </div>
+
+            <div class="question-group" id="mood">
+                <label>What kind of mood should the ghost bring to your interactions?</label>
+                <div class="radio-option">
+                    <input type="radio" id="mood_uplifting" name="mood" value="uplifting">
+                    <label for="mood_uplifting">Uplifting and light-hearted</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="mood_fun" name="mood" value="fun">
+                    <label for="mood_fun">Fun with a hint of chaos</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="mood_thrilling" name="mood" value="thrilling">
+                    <label for="mood_thrilling">Thrilling and suspenseful</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="mood_reflective" name="mood" value="reflective">
+                    <label for="mood_reflective">Reflective and emotional</label>
+                </div>
+            </div>
+
+            <button type="submit">Summon Ghost 👻</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('ghostForm');
+        const questions = {
+            initialChoice: document.getElementById('initialChoice'),
+            realCharacter: document.getElementById('realCharacter'),
+            ghostVibe: document.getElementById('ghostVibe'),
+            interaction: document.getElementById('interaction'),
+            connection: document.getElementById('connection'),
+            appearance: document.getElementById('appearance'),
+            mood: document.getElementById('mood')
+        };
+
+        // Show/hide questions based on initial choice
+        document.querySelectorAll('input[name="initialChoice"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'real') {
+                    questions.realCharacter.classList.add('active');
+                    [questions.ghostVibe, questions.interaction, questions.connection, 
+                     questions.appearance, questions.mood].forEach(q => q.classList.remove('active'));
+                } else {
+                    questions.realCharacter.classList.remove('active');
+                    [questions.ghostVibe, questions.interaction, questions.connection, 
+                     questions.appearance, questions.mood].forEach(q => q.classList.add('active'));
+                }
+            });
+        });
+
+        // Form submission handler
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const result = document.getElementById('result');
+            
+            // Process form data and determine ghost type
+            const ghostType = determineGhostType(formData);
+            
+            // Display result
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3 style="color: #00ffff;">Your Ghost Profile</h3>
+                <p>${ghostType}</p>
+            `;
+        });
+
+        function determineGhostType(formData) {
+            const choice = formData.get('initialChoice');
+            
+            if (choice === 'real') {
+                const character = formData.get('characterName');
+                return `You will be connected with the spirit of ${character}. Please wait while we attempt to make contact...`;
+            }
+            
+            // Map responses to ghost types based on the provided mapping
+            const vibe = formData.get('ghostVibe');
+            const interaction = formData.get('interaction');
+            const connection = formData.get('connection');
+            const appearance = formData.get('appearance');
+            const mood = formData.get('mood');
+            
+            // Implement the ghost type determination logic based on the mapping provided
+            // This is a simplified version - you can expand it based on the detailed mapping
+            let ghostType = '';
+            
+            if (vibe === 'friendly' && interaction === 'advice') {
+                ghostType = 'Benevolent Ghost: A kind and protective spirit, like a parent or mentor guiding their loved ones.';
+            } else if (vibe === 'playful' && interaction === 'stories') {
+                ghostType = 'Mischievous Ghost: A playful trickster who delights in harmless pranks and puzzles.';
+            } else if (vibe === 'mysterious' && interaction === 'spooky') {
+                ghostType = 'Malevolent Ghost: A disruptive and intense spirit that creates dramatic encounters.';
+            } else if (vibe === 'deep' && interaction === 'cryptic') {
+                ghostType = 'Philosophical Ghost: A contemplative spirit that shares deep insights about existence.';
+            }
+            
+            return ghostType || 'A unique ghost that defies traditional classification...';
+        }
+    </script>
+</body>
+</html> 
