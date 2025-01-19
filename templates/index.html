@@ -8,15 +8,25 @@
 <body>
     <h1>Welcome to Ghost App</h1>
     <p>This is a simple Flask application.</p>
-    <button onclick="runPython()">Run Python</button>
-    <p id="output"></p>
+    
+    <button onclick="runCode()">Run Code</button>
+    <div id="result"></div>
 
     <script>
-        function runPython() {
-            fetch('https://your-app.onrender.com/run-code', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => document.getElementById('output').innerText = data.result)
-                .catch(error => console.error('Error:', error));
+        async function runCode() {
+            try {
+                const response = await fetch('https://sp00kai-github-io.onrender.com/run-code', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                document.getElementById('result').textContent = data.result;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').textContent = 'Error executing code';
+            }
         }
     </script>
 </body>
