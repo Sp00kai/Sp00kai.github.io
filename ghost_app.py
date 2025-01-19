@@ -17,16 +17,13 @@ flask_cors.CORS(app, resources={
 def index():
     return send_file('index.html')
 
-@app.route('/run-code', methods=['POST', 'OPTIONS'])
-def run_code():
-    result = "Python code executed!"
-    app.logger.info(f"Received request: {result}")
-    print("Received request: ", result)
-    return jsonify({'result': result})
+@app.route('/chat')
+def chat():
+    return send_file('chat.html')
 
 def start_server():
     # Get port from environment variable or default to 4000
-    port = int(os.environ.get('PORT', 4000))
+    port = int(os.environ.get('PORT', 8080))
     waitress.serve(app, host='0.0.0.0', port=port)
 
 if __name__ == '__main__':
