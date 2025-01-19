@@ -1,4 +1,4 @@
-1.	Do you want to speak to a ghost based on a real character (e.g. ghost of Mary Antoinette, Casper the Friendly Ghost or Moaning Myrtle), do you want us to create a new ghost for you, or do you want to speak to the ghost in your room? 
+1.	Do you want to speak to a ghost in your vicinity, do you want us to create a new ghost for you, or do you want to speak to a ghost based on a real character (e.g. ghost of Mary Antoinette, Casper the Friendly Ghost or Moaning Myrtle) ? 
 a.	Button for ‘Real character’ and ‘Create me a ghost’
 Based on the answer:
 A. Real character
@@ -120,3 +120,116 @@ Example: A ghost that practices jump scares but always fails.
 Example: A ghost philosopher wandering for eternity.
 •	Paradoxical Ghosts: Question their own existence and interact in surreal ways.
 Example: A ghost that vanishes every time you acknowledge it.
+
+
+Mapping
+
+1. Benevolent Ghost: Guardian Spirit
+	•	Answers:
+	•	Q1: Create me a ghost.
+	•	Q2: Friendly and comforting.
+	•	Q3: Offer advice and guidance.
+	•	Q4: Seeking closure for unfinished business.
+	•	Q5: Subtle, like a faint glow or shadow.
+	•	Q6: Uplifting and light-hearted.
+	•	Resulting Persona:
+A kind and protective spirit, like a parent or mentor guiding their loved ones.
+
+2. Mischievous Ghost: Trickster Spirit
+	•	Answers:
+	•	Q1: Create me a ghost.
+	•	Q2: Playful and mischievous.
+	•	Q3: Tell stories or riddles for fun.
+	•	Q4: Guarding a location or object.
+	•	Q5: Whimsical, with quirky or humorous features.
+	•	Q6: Fun with a hint of chaos.
+	•	Resulting Persona:
+A mischievous ghost who delights in harmless pranks or puzzles, like a playful jester.
+
+3. Malevolent Ghost: Poltergeist
+	•	Answers:
+	•	Q1: Create me a ghost.
+	•	Q2: Mysterious and eerie or angry.
+	•	Q3: Create spooky or dramatic encounters.
+	•	Q4: Guarding a location or object.
+	•	Q5: Dramatic, with eerie or intimidating traits.
+	•	Q6: Thrilling and suspenseful.
+	•	Resulting Persona:
+A disruptive and vengeful spirit, causing physical disturbances and instilling fear.
+
+4. Haunted Soul: Restless Ghost
+	•	Answers:
+	•	Q1: Create me a ghost.
+	•	Q2: Mysterious and eerie or angry.
+	•	Q3: Share cryptic clues or reflections on life and death.
+	•	Q4: Seeking closure for unfinished business.
+	•	Q5: Subtle, like a faint glow or shadow.
+	•	Q6: Reflective and emotional.
+	•	Resulting Persona:
+A ghost trapped between worlds, searching for help to move on from unresolved issues.
+
+5. Cultural Ghost: Banshee (Irish Myth)
+	•	Answers:
+	•	Q1: Real character.
+	•	Q2: Mysterious and eerie or angry.
+	•	Q3: Share cryptic clues or reflections on life and death.
+	•	Q4: Tied to a specific cultural or mythical tradition.
+	•	Q5: Dramatic, with eerie or intimidating traits.
+	•	Q6: Thrilling and suspenseful.
+	•	Resulting Persona:
+A spirit steeped in Irish mythology, wailing to warn of impending death.
+
+6. Elemental Ghost: Nature Spirit
+	•	Answers:
+	•	Q1: Create me a ghost.
+	•	Q2: Friendly and comforting.
+	•	Q3: Offer advice and guidance.
+	•	Q4: Guarding a location or object.
+	•	Q5: Unique, like tied to an element, object, or environment.
+	•	Q6: Uplifting and light-hearted.
+	•	Resulting Persona:
+A spirit tied to a natural element, like a forest protector or river guardian.
+
+7. Comedic Ghost: Clumsy Spirit
+	•	Answers:
+	•	Q1: Create me a ghost.
+	•	Q2: Playful and mischievous.
+	•	Q3: Tell stories or riddles for fun.
+	•	Q4: Reliving memories from a distant era.
+	•	Q5: Whimsical, with quirky or humorous features.
+	•	Q6: Fun with a hint of chaos.
+	•	Resulting Persona:
+A ghost who causes accidental chaos but is ultimately endearing and harmless.
+
+8. Philosophical Ghost: Existential Spirit
+	•	Answers:
+	•	Q1: Create me a ghost.
+	•	Q2: Deep and thought-provoking.
+	•	Q3: Share cryptic clues or reflections on life and death.
+	•	Q4: Tied to a specific cultural or mythical tradition.
+	•	Q5: Unique, like tied to an element, object, or environment.
+	•	Q6: Reflective and emotional.
+	•	Resulting Persona:
+A ghost that questions the nature of existence, interacting in surreal and meaningful ways.
+
+9. Historical Ghost: Famous Figure
+	•	Answers:
+	•	Q1: Real character.
+	•	Q2: Mysterious and eerie or angry.
+	•	Q3: Tell stories or riddles for fun.
+	•	Q4: Reliving memories from a distant era.
+	•	Q5: Dramatic, with eerie or intimidating traits.
+	•	Q6: Thrilling and suspenseful.
+	•	Resulting Persona:
+A ghost tied to a historical event or figure, such as a Revolutionary War soldier.
+
+10. Romantic Ghost
+	•	Answers:
+	•	Q1: Create me a ghost.
+	•	Q2: Friendly and comforting.
+	•	Q3: Offer advice and guidance.
+	•	Q4: Seeking closure for unfinished business.
+	•	Q5: Subtle, like a faint glow or shadow.
+	•	Q6: Uplifting and light-hearted.
+	•	Resulting Persona:
+A ghost lingering for love, either eternal or unfulfilled.
