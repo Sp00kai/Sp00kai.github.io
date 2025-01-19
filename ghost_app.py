@@ -21,7 +21,7 @@ def index():
 def chat():
     return send_file('chat.html')
 
-@app.route('/submit-assessment', methods=['POST'])
+@app.route('/submit-assessment', methods=['POST', 'OPTIONS'])
 def submit_assessment():
     try:
         # Get the JSON data from the request
