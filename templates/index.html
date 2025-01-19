@@ -8,5 +8,16 @@
 <body>
     <h1>Welcome to Ghost App</h1>
     <p>This is a simple Flask application.</p>
+    <button onclick="runPython()">Run Python</button>
+    <p id="output"></p>
+
+    <script>
+        function runPython() {
+            fetch('https://your-app.onrender.com/run-code', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => document.getElementById('output').innerText = data.result)
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
 </body>
 </html> 
