@@ -328,26 +328,42 @@
         }
 
         // Handle API key submission
-        document.getElementById('submit-api-key').addEventListener('click', () => {
+        document.getElementById('submit-api-key').addEventListener('click', async () => {
             const apiKey = document.getElementById('api-key-input').value.trim();
-            if (apiKey) {
-                sessionStorage.setItem('openai_api_key', apiKey);
-                document.getElementById('api-key-modal').style.display = 'none';
-                document.querySelector('.chat-container').style.display = 'flex';
-                initializeChat();
+            if (!apiKey) {
+                alert('Please enter an API key');
+                return;
             }
+            
+            if (!validateApiKey(apiKey)) {
+                alert('Please enter a valid OpenAI API key starting with "sk-"');
+                return;
+            }
+
+            sessionStorage.setItem('openai_api_key', apiKey);
+            document.getElementById('api-key-modal').style.display = 'none';
+            document.querySelector('.chat-container').style.display = 'flex';
+            initializeChat();
         });
 
         // Also handle Enter key press for API key input
         document.getElementById('api-key-input').addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
                 const apiKey = event.target.value.trim();
-                if (apiKey) {
-                    sessionStorage.setItem('openai_api_key', apiKey);
-                    document.getElementById('api-key-modal').style.display = 'none';
-                    document.querySelector('.chat-container').style.display = 'flex';
-                    initializeChat();
+                if (!apiKey) {
+                    alert('Please enter an API key');
+                    return;
                 }
+                
+                if (!validateApiKey(apiKey)) {
+                    alert('Please enter a valid OpenAI API key starting with "sk-"');
+                    return;
+                }
+
+                sessionStorage.setItem('openai_api_key', apiKey);
+                document.getElementById('api-key-modal').style.display = 'none';
+                document.querySelector('.chat-container').style.display = 'flex';
+                initializeChat();
             }
         });
 
@@ -398,7 +414,8 @@
                 }, {
                     headers: {
                         'Authorization': `Bearer ${sessionStorage.getItem('openai_api_key')}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     }
                 });
 
@@ -412,8 +429,37 @@
 
                 return assistantMessage;
             } catch (error) {
-                console.error('Error:', error);
-                throw error;
+                console.error('Error details:', {
+                    message: error.message,
+                    response: error.response?.data,
+                    status: error.response?.status
+                });
+                
+                let errorMessage = "I sense a disturbance in the connection...";
+                
+                if (error.response) {
+                    switch (error.response.status) {
+                        case 401:
+                            errorMessage = "Your API key appears to be invalid. Please refresh the page and try a different key.";
+                            // Clear the invalid API key
+                            sessionStorage.removeItem('openai_api_key');
+                            // Reload the page after a short delay
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 3000);
+                            break;
+                        case 429:
+                            errorMessage = "Too many spirits trying to communicate at once. Please wait a moment and try again.";
+                            break;
+                        case 500:
+                            errorMessage = "The spirit realm is experiencing difficulties. Please try again in a moment.";
+                            break;
+                        default:
+                            errorMessage = "A mysterious force prevents our communication. Please try again.";
+                    }
+                }
+                
+                throw new Error(errorMessage);
             }
         }
 
@@ -436,7 +482,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 removeTypingIndicator(typingId);
-                addMessage("I sense a disturbance in the connection... Please try again.", 'assistant');
+                addMessage(error.message, 'assistant');
             }
         }
 
@@ -464,6 +510,12 @@
             if (typingDiv) {
                 typingDiv.remove();
             }
+        }
+
+        // Add a function to validate API key format
+        function validateApiKey(apiKey) {
+            // Basic format check for OpenAI API keys
+            return apiKey.startsWith('sk-') && apiKey.length > 20;
         }
 
         // Make sure initialization happens after DOM is fully loaded
