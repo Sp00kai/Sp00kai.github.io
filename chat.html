@@ -22,15 +22,15 @@
         }
 
         .chat-container {
+            display: none;
             max-width: 800px;
             margin: 0 auto;
             background-color: #2d2d2d;
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
-            display: flex;
             flex-direction: column;
-            height: 90vh;  /* Default for desktop */
-            width: 95%;  /* Add width for better mobile control */
+            height: 90vh;
+            width: 95%;
             border: 1px solid rgba(0, 255, 255, 0.1);
         }
 
@@ -292,7 +292,7 @@
         </div>
     </div>
 
-    <div class="chat-container" style="display: none;">
+    <div class="chat-container">
         <div class="chat-header">
             👻 Ghost Communicator
         </div>
@@ -335,6 +335,19 @@
                 document.getElementById('api-key-modal').style.display = 'none';
                 document.querySelector('.chat-container').style.display = 'flex';
                 initializeChat();
+            }
+        });
+
+        // Also handle Enter key press for API key input
+        document.getElementById('api-key-input').addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                const apiKey = event.target.value.trim();
+                if (apiKey) {
+                    sessionStorage.setItem('openai_api_key', apiKey);
+                    document.getElementById('api-key-modal').style.display = 'none';
+                    document.querySelector('.chat-container').style.display = 'flex';
+                    initializeChat();
+                }
             }
         });
 
@@ -453,8 +466,8 @@
             }
         }
 
-        // Initialize the app when the page loads
-        window.onload = initializeApp;
+        // Make sure initialization happens after DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html> 
