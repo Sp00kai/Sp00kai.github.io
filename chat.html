@@ -206,10 +206,93 @@
             66% { content: '...'; }
             100% { content: '.'; }
         }
+
+        /* API Key Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #2d2d2d;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-content h2 {
+            color: #00ffff;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .modal-content p {
+            color: #fff;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        #api-key-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            background-color: #333;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            box-sizing: border-box;
+        }
+
+        #api-key-input:focus {
+            border-color: #00ffff;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        #submit-api-key {
+            width: 100%;
+            padding: 12px;
+            background-color: #1f3333;
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+        }
+
+        #submit-api-key:hover {
+            background-color: #2a4444;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="chat-container">
+    <!-- API Key Modal -->
+    <div id="api-key-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>👻 Welcome to Ghost Communicator</h2>
+            <p>To communicate with the spirits, you'll need to provide your OpenAI API key. This key will be stored securely in your browser's session storage.</p>
+            <input type="password" id="api-key-input" placeholder="Enter your OpenAI API key...">
+            <button id="submit-api-key">Enter the Spirit Realm</button>
+        </div>
+    </div>
+
+    <div class="chat-container" style="display: none;">
         <div class="chat-header">
             👻 Ghost Communicator
         </div>
@@ -228,8 +311,35 @@
         // Store conversation history
         let conversationHistory = [];
         
+        // Check for API key and show/hide modal accordingly
+        function initializeApp() {
+            const apiKey = sessionStorage.getItem('openai_api_key');
+            const chatContainer = document.querySelector('.chat-container');
+            const apiKeyModal = document.getElementById('api-key-modal');
+            
+            if (apiKey) {
+                chatContainer.style.display = 'flex';
+                apiKeyModal.style.display = 'none';
+                initializeChat();
+            } else {
+                chatContainer.style.display = 'none';
+                apiKeyModal.style.display = 'flex';
+            }
+        }
+
+        // Handle API key submission
+        document.getElementById('submit-api-key').addEventListener('click', () => {
+            const apiKey = document.getElementById('api-key-input').value.trim();
+            if (apiKey) {
+                sessionStorage.setItem('openai_api_key', apiKey);
+                document.getElementById('api-key-modal').style.display = 'none';
+                document.querySelector('.chat-container').style.display = 'flex';
+                initializeChat();
+            }
+        });
+
         // Initialize chat with session storage data
-        window.onload = async function() {
+        async function initializeChat() {
             const sessionData = sessionStorage.getItem('ghostPersona');
             let persona;
             
@@ -257,7 +367,7 @@
                 removeTypingIndicator(typingId);
                 addMessage("I sense a disturbance in the connection... Please try again.", 'assistant');
             }
-        };
+        }
 
         async function getChatGPTResponse(userMessage) {
             try {
@@ -274,7 +384,7 @@
                     max_tokens: 150
                 }, {
                     headers: {
-                        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                        'Authorization': `Bearer ${sessionStorage.getItem('openai_api_key')}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -342,6 +452,9 @@
                 typingDiv.remove();
             }
         }
+
+        // Initialize the app when the page loads
+        window.onload = initializeApp;
     </script>
 </body>
 </html> 
