@@ -246,6 +246,12 @@
             mood: document.getElementById('mood')
         };
 
+        // Get the submit button
+        const submitButton = document.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.style.opacity = '0.5';
+        submitButton.style.cursor = 'not-allowed';
+
         // Show/hide questions based on initial choice
         document.querySelectorAll('input[name="initialChoice"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
@@ -258,8 +264,39 @@
                     [questions.ghostVibe, questions.interaction, questions.connection, 
                      questions.appearance, questions.mood].forEach(q => q.classList.add('active'));
                 }
+                checkFormCompletion();
             });
         });
+
+        // Add input event listener for the character name field
+        document.getElementById('characterName').addEventListener('input', checkFormCompletion);
+
+        // Add change event listeners for all radio buttons
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', checkFormCompletion);
+        });
+
+        function checkFormCompletion() {
+            const initialChoice = document.querySelector('input[name="initialChoice"]:checked')?.value;
+            let isComplete = false;
+
+            if (initialChoice === 'real') {
+                // For real character path, just need the character name
+                const characterName = document.getElementById('characterName').value.trim();
+                isComplete = characterName.length > 0;
+            } else if (initialChoice === 'create') {
+                // For create path, need all questions answered
+                const requiredFields = ['ghostVibe', 'interaction', 'connection', 'appearance', 'mood'];
+                isComplete = requiredFields.every(field => 
+                    document.querySelector(`input[name="${field}"]:checked`)
+                );
+            }
+
+            // Update button state
+            submitButton.disabled = !isComplete;
+            submitButton.style.opacity = isComplete ? '1' : '0.5';
+            submitButton.style.cursor = isComplete ? 'pointer' : 'not-allowed';
+        }
 
         // Form submission handler
         form.addEventListener('submit', (e) => {
@@ -269,12 +306,47 @@
             
             // Process form data and determine ghost type
             const ghostType = determineGhostType(formData);
+
+            // Get existing data from sessionStorage
+            let ghostData = JSON.parse(sessionStorage.getItem('ghostData') || '{}');
+            
+            // Add ghost persona data
+            ghostData.summonedGhost = {
+                type: formData.get('initialChoice'),
+                details: ghostType,
+                characteristics: {
+                    vibe: formData.get('ghostVibe'),
+                    interaction: formData.get('interaction'),
+                    connection: formData.get('connection'),
+                    appearance: formData.get('appearance'),
+                    mood: formData.get('mood')
+                }
+            };
+
+            if (formData.get('initialChoice') === 'real') {
+                ghostData.summonedGhost.characterName = formData.get('characterName');
+            }
+
+            // Store updated data back in sessionStorage
+            sessionStorage.setItem('ghostData', JSON.stringify(ghostData));
             
             // Display result
             result.style.display = 'block';
             result.innerHTML = `
                 <h3 style="color: #00ffff;">Your Ghost Profile</h3>
                 <p>${ghostType}</p>
+                <button onclick="window.location.href='chat.html'" style="
+                    background-color: #1f3333;
+                    color: #00ffff;
+                    border: 1px solid rgba(0, 255, 255, 0.2);
+                    padding: 15px 30px;
+                    border-radius: 25px;
+                    cursor: pointer;
+                    font-size: 18px;
+                    margin-top: 20px;
+                    font-family: 'Courier New', monospace;
+                    transition: all 0.3s ease;
+                ">Start Chatting 💬</button>
             `;
         });
 
@@ -294,7 +366,6 @@
             const mood = formData.get('mood');
             
             // Implement the ghost type determination logic based on the mapping provided
-            // This is a simplified version - you can expand it based on the detailed mapping
             let ghostType = '';
             
             if (vibe === 'friendly' && interaction === 'advice') {

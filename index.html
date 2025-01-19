@@ -271,6 +271,18 @@
         }
 
         function displayResults(results) {
+            // Store results in sessionStorage
+            const ghostProfile = {
+                compatibilityProfile: {
+                    ghostType: results.ghostType,
+                    skepticismLevel: results.skepticismLevel,
+                    fearLevel: results.fearLevel,
+                    explorationDrive: results.explorationDrive,
+                    details: results.details
+                }
+            };
+            sessionStorage.setItem('ghostData', JSON.stringify(ghostProfile));
+
             // Create and style a modal to display results
             const modal = document.createElement('div');
             modal.style.cssText = `
