@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghost Communicator</title>
+    <title>👻 Ghost Communicator</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -303,13 +303,54 @@
             }
         }
 
-        function addMessage(message, sender) {
+        async function addMessage(message, sender) {
             const messagesDiv = document.querySelector('.chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', `${sender}-message`);
-            messageDiv.textContent = message;
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // For assistant messages, gradually reveal text while speaking
+            if (sender === 'assistant') {
+                const utterance = new SpeechSynthesisUtterance(message);
+                
+                // Configure spooky voice settings
+                utterance.pitch = 0.8;    // Lower pitch for eeriness
+                utterance.rate = 0.85;    // Slower rate for ghostly effect
+                
+                // Try to get a deeper voice if available
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(voice => 
+                    voice.name.toLowerCase().includes('male') || 
+                    voice.name.toLowerCase().includes('deep')
+                );
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+
+                // Calculate timing for text reveal (10% faster than before)
+                const wordsPerMinute = utterance.rate * 165; // Increased from 150 for faster reveal
+                const msPerChar = 60000 / (wordsPerMinute * 5); // Approximate chars per word
+
+
+
+                let currentIndex = 0;
+                const revealText = () => {
+                    if (currentIndex <= message.length) {
+                        messageDiv.textContent = message.slice(0, currentIndex) + (currentIndex < message.length ? '|' : '');
+                        currentIndex++;
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        setTimeout(revealText, msPerChar);
+                    }
+                };
+
+                // Start text reveal and speech simultaneously
+                revealText();
+                window.speechSynthesis.speak(utterance);
+            } else {
+                // For user messages, show immediately
+                messageDiv.textContent = message;
+            }
         }
 
         function addTypingIndicator() {
