@@ -214,7 +214,7 @@
             👻 Ghost Communicator
         </div>
         <div class="chat-messages" id="chat-messages">
-            <div class="message assistant-message">I am here... How may I assist you from beyond?</div>
+            <!-- Initial message will be set by JavaScript -->
         </div>
         <div class="input-area">
             <input type="text" id="message-input" placeholder="Speak to the spirit..." 
@@ -223,7 +223,77 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        // Store conversation history
+        let conversationHistory = [];
+        
+        // Initialize chat with session storage data
+        window.onload = async function() {
+            const sessionData = sessionStorage.getItem('ghostPersona');
+            let persona;
+            
+            if (sessionData) {
+                persona = sessionData;
+            } else {
+                persona = "You are the ghost of Vlad Tepes, also known as Dracula. You are a 15th-century Romanian ruler known for your ruthlessness and the inspiration for Bram Stoker's Dracula. Speak in an aristocratic, slightly archaic manner. Make occasional references to blood, immortality, and your historical legacy. You should be proud, sophisticated, and maintain a dark sense of humor. When appropriate, you may include Romanian phrases. Remember your history as both a ruler who defended his lands and the infamous vampire you became in legend.";
+                sessionStorage.setItem('ghostPersona', persona);
+            }
+
+            const initialMessage = {
+                role: "system",
+                content: persona
+            };
+            conversationHistory.push(initialMessage);
+            
+            // Add initial ghost message
+            const typingId = addTypingIndicator();
+            try {
+                const response = await getChatGPTResponse("Introduce yourself to the mortal before you.");
+                removeTypingIndicator(typingId);
+                addMessage(response, 'assistant');
+            } catch (error) {
+                console.error('Error:', error);
+                removeTypingIndicator(typingId);
+                addMessage("I sense a disturbance in the connection... Please try again.", 'assistant');
+            }
+        };
+
+        async function getChatGPTResponse(userMessage) {
+            try {
+                // Add user message to conversation history
+                conversationHistory.push({
+                    role: "user",
+                    content: userMessage
+                });
+
+                const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                    model: "gpt-3.5-turbo",
+                    messages: conversationHistory,
+                    temperature: 0.7,
+                    max_tokens: 150
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const assistantMessage = response.data.choices[0].message.content;
+                
+                // Add assistant's response to conversation history
+                conversationHistory.push({
+                    role: "assistant",
+                    content: assistantMessage
+                });
+
+                return assistantMessage;
+            } catch (error) {
+                console.error('Error:', error);
+                throw error;
+            }
+        }
+
         async function sendMessage() {
             const input = document.getElementById('message-input');
             const message = input.value.trim();
@@ -237,40 +307,33 @@
             const typingId = addTypingIndicator();
 
             try {
-                // Artificial delay between 1.5 and 3 seconds
-                const delay = Math.random() * 1500 + 1500;
-                await new Promise(resolve => setTimeout(resolve, delay));
-
-                const response = await fetch('https://sp00kai-github-io.onrender.com/run-code', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ message: message })
-                });
-                
-                // Remove typing indicator
+                const response = await getChatGPTResponse(message);
                 removeTypingIndicator(typingId);
-                
-                const data = await response.json();
-                addMessage(data.result, 'assistant');
+                addMessage(response, 'assistant');
             } catch (error) {
                 console.error('Error:', error);
                 removeTypingIndicator(typingId);
-                addMessage('The spirits are silent... Try again later.', 'assistant');
+                addMessage("I sense a disturbance in the connection... Please try again.", 'assistant');
             }
+        }
+
+        function addMessage(message, sender) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', `${sender}-message`);
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
         function addTypingIndicator() {
             const messagesDiv = document.getElementById('chat-messages');
             const typingDiv = document.createElement('div');
-            const id = 'typing-' + Date.now();
-            typingDiv.id = id;
-            typingDiv.className = 'message assistant-message typing-indicator';
-            typingDiv.innerHTML = '<span>The spirit is channeling a response</span><span class="dots">...</span>';
+            typingDiv.classList.add('message', 'assistant-message', 'typing-indicator');
+            typingDiv.innerHTML = 'Channeling response<span class="dots">...</span>';
             messagesDiv.appendChild(typingDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            return id;
+            return typingDiv.id = 'typing-' + Date.now();
         }
 
         function removeTypingIndicator(id) {
@@ -278,15 +341,6 @@
             if (typingDiv) {
                 typingDiv.remove();
             }
-        }
-
-        function addMessage(text, sender) {
-            const messagesDiv = document.getElementById('chat-messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}-message`;
-            messageDiv.textContent = text;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
     </script>
 </body>
