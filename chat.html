@@ -3,92 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghost Chat</title>
+    <title>Ghost Communicator</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Courier New', monospace;
             margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
+            padding: 0;  /* Remove padding for mobile */
+            background-color: #1a1a1a;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;  /* Add flex display */
+            align-items: center;  /* Center vertically */
         }
 
         .chat-container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background-color: #2d2d2d;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
-            height: 80vh;
+            height: 90vh;  /* Default for desktop */
+            width: 95%;  /* Add width for better mobile control */
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        /* Mobile devices */
+        @media only screen and (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            
+            .chat-container {
+                height: 100vh;  /* Full height on mobile */
+                width: 100%;    /* Full width on mobile */
+                border-radius: 0;  /* Remove border radius on mobile */
+                border: none;      /* Remove border on mobile */
+            }
+
+            .chat-header {
+                padding: 15px;  /* Slightly smaller padding on mobile */
+                font-size: 20px;  /* Slightly smaller font on mobile */
+            }
+
+            .input-area {
+                border-radius: 0;  /* Remove border radius on mobile */
+                padding: 15px;     /* Adjust padding for mobile */
+            }
+
+            #message-input, #send-button {
+                font-size: 16px;   /* Ensure readable font size on mobile */
+            }
+        }
+
+        .chat-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+            font-size: 24px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
         .chat-messages {
             flex-grow: 1;
             overflow-y: auto;
             padding: 20px;
+            background: linear-gradient(to bottom, #2d2d2d, #232323);
         }
 
         .message {
-            margin: 10px 0;
-            max-width: 70%;
-            padding: 10px 15px;
+            margin: 15px 0;
+            max-width: 80%;
+            padding: 12px 18px;
             border-radius: 20px;
             clear: both;
+            font-size: 16px;
+            position: relative;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .user-message {
-            background-color: #007AFF;
-            color: white;
+            background-color: #404040;
+            color: #fff;
             float: right;
             border-bottom-right-radius: 5px;
+            box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         .assistant-message {
-            background-color: #E9E9EB;
-            color: black;
+            background-color: #1f3333;
+            color: #00ffff;
             float: left;
             border-bottom-left-radius: 5px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
         }
 
         .input-area {
             padding: 20px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid rgba(0, 255, 255, 0.1);
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            background-color: #232323;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
         }
 
         #message-input {
             flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
+            padding: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 25px;
             outline: none;
             font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+        }
+
+        #message-input:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
         }
 
         #send-button {
-            background-color: #007AFF;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            background-color: #1f3333;
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 16px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
         }
 
         #send-button:hover {
-            background-color: #0056b3;
+            background-color: #2a4444;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #404040;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a4a4a;
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
+        <div class="chat-header">
+            👻 Ghost Communicator
+        </div>
         <div class="chat-messages" id="chat-messages">
-            <div class="message assistant-message">Hello! How can I help you today?</div>
+            <div class="message assistant-message">I am here... How may I assist you from beyond?</div>
         </div>
         <div class="input-area">
-            <input type="text" id="message-input" placeholder="Type a message..." 
+            <input type="text" id="message-input" placeholder="Speak to the spirit..." 
                    onkeypress="if(event.key === 'Enter') sendMessage()">
             <button id="send-button" onclick="sendMessage()">Send</button>
         </div>
@@ -101,7 +192,6 @@
             
             if (!message) return;
 
-            // Add user message to chat
             addMessage(message, 'user');
             input.value = '';
 
@@ -118,7 +208,7 @@
                 addMessage(data.result, 'assistant');
             } catch (error) {
                 console.error('Error:', error);
-                addMessage('Sorry, there was an error processing your message.', 'assistant');
+                addMessage('The spirits are silent... Try again later.', 'assistant');
             }
         }
 
