@@ -19,11 +19,9 @@ def index():
 
 @app.route('/run-code', methods=['POST', 'OPTIONS'])
 def run_code():
-    if request.method == 'OPTIONS':
-        return '', 200
     result = "Python code executed!"
-    app.logger.info(f"Received request: {request.json}")
-    print("Received request: ", request.json)
+    app.logger.info(f"Received request: {result}")
+    print("Received request: ", result)
     return jsonify({'result': result})
 
 def start_server():
