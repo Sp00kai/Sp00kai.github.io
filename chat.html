@@ -8,12 +8,17 @@
         body {
             font-family: 'Courier New', monospace;
             margin: 0;
-            padding: 0;  /* Remove padding for mobile */
+            padding: 0;
             background-color: #1a1a1a;
             color: #fff;
             min-height: 100vh;
-            display: flex;  /* Add flex display */
-            align-items: center;  /* Center vertically */
+            min-height: -webkit-fill-available; /* Fix for mobile Safari */
+            display: flex;
+            align-items: center;
+        }
+
+        html {
+            height: -webkit-fill-available; /* Fix for mobile Safari */
         }
 
         .chat-container {
@@ -33,13 +38,16 @@
         @media only screen and (max-width: 768px) {
             body {
                 padding: 0;
+                align-items: flex-start; /* Align to top on mobile */
             }
             
             .chat-container {
-                height: 100vh;  /* Full height on mobile */
-                width: 100%;    /* Full width on mobile */
-                border-radius: 0;  /* Remove border radius on mobile */
-                border: none;      /* Remove border on mobile */
+                height: 100vh;
+                height: -webkit-fill-available;
+                width: 100%;
+                border-radius: 0;
+                border: none;
+                padding-bottom: env(safe-area-inset-bottom); /* Add safe area padding */
             }
 
             .chat-header {
@@ -48,8 +56,18 @@
             }
 
             .input-area {
-                border-radius: 0;  /* Remove border radius on mobile */
-                padding: 15px;     /* Adjust padding for mobile */
+                border-radius: 0;
+                padding: 15px;
+                padding-bottom: max(15px, env(safe-area-inset-bottom)); /* Ensure padding is at least 15px */
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #232323;
+            }
+
+            .chat-messages {
+                padding-bottom: 80px; /* Add space for fixed input area */
             }
 
             #message-input, #send-button {
@@ -168,6 +186,26 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #4a4a4a;
         }
+
+        /* Add these new styles to your existing CSS */
+        .typing-indicator {
+            background-color: #1f3333 !important;
+            color: #00ffff !important;
+            opacity: 0.7;
+        }
+
+        .typing-indicator .dots {
+            animation: typing 1.5s infinite;
+            display: inline-block;
+            width: 20px;
+        }
+
+        @keyframes typing {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+            100% { content: '.'; }
+        }
     </style>
 </head>
 <body>
@@ -195,7 +233,14 @@
             addMessage(message, 'user');
             input.value = '';
 
+            // Add typing indicator
+            const typingId = addTypingIndicator();
+
             try {
+                // Artificial delay between 1.5 and 3 seconds
+                const delay = Math.random() * 1500 + 1500;
+                await new Promise(resolve => setTimeout(resolve, delay));
+
                 const response = await fetch('https://sp00kai-github-io.onrender.com/run-code', {
                     method: 'POST',
                     headers: {
@@ -204,11 +249,34 @@
                     body: JSON.stringify({ message: message })
                 });
                 
+                // Remove typing indicator
+                removeTypingIndicator(typingId);
+                
                 const data = await response.json();
                 addMessage(data.result, 'assistant');
             } catch (error) {
                 console.error('Error:', error);
+                removeTypingIndicator(typingId);
                 addMessage('The spirits are silent... Try again later.', 'assistant');
+            }
+        }
+
+        function addTypingIndicator() {
+            const messagesDiv = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            const id = 'typing-' + Date.now();
+            typingDiv.id = id;
+            typingDiv.className = 'message assistant-message typing-indicator';
+            typingDiv.innerHTML = '<span>The spirit is channeling a response</span><span class="dots">...</span>';
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            return id;
+        }
+
+        function removeTypingIndicator(id) {
+            const typingDiv = document.getElementById(id);
+            if (typingDiv) {
+                typingDiv.remove();
             }
         }
 
