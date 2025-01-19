@@ -206,189 +206,57 @@
             66% { content: '...'; }
             100% { content: '.'; }
         }
-
-        /* API Key Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: #2d2d2d;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
-            border: 1px solid rgba(0, 255, 255, 0.1);
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .modal-content h2 {
-            color: #00ffff;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-align: center;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-        }
-
-        .modal-content p {
-            color: #fff;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        #api-key-input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            background-color: #333;
-            border: 1px solid rgba(0, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #fff;
-            font-family: 'Courier New', monospace;
-            box-sizing: border-box;
-        }
-
-        #api-key-input:focus {
-            border-color: #00ffff;
-            outline: none;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
-        }
-
-        #submit-api-key {
-            width: 100%;
-            padding: 12px;
-            background-color: #1f3333;
-            color: #00ffff;
-            border: 1px solid rgba(0, 255, 255, 0.2);
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            transition: all 0.3s ease;
-        }
-
-        #submit-api-key:hover {
-            background-color: #2a4444;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-        }
     </style>
 </head>
 <body>
-    <!-- API Key Modal -->
-    <div id="api-key-modal" class="modal-overlay" style="display: flex;">
-        <div class="modal-content">
-            <h2>👻 Welcome to Ghost Communicator</h2>
-            <p>To communicate with the spirits, you'll need to provide your OpenAI API key. This key will be stored securely in your browser's session storage.</p>
-            <input type="password" id="api-key-input" placeholder="Enter your OpenAI API key...">
-            <button id="submit-api-key">Enter the Spirit Realm</button>
-        </div>
-    </div>
-
-    <div class="chat-container" style="display: none;">
-        <div class="chat-header">
-            👻 Ghost Communicator
-        </div>
-        <div class="chat-messages" id="chat-messages">
-            <!-- Initial message will be set by JavaScript -->
-        </div>
+    <div class="chat-container">
+        <div class="chat-header">Ghost Communicator</div>
+        <div class="chat-messages"></div>
         <div class="input-area">
-            <input type="text" id="message-input" placeholder="Speak to the spirit..." 
-                   onkeypress="if(event.key === 'Enter') sendMessage()">
-            <button id="send-button" onclick="sendMessage()">Send</button>
+            <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off">
+            <button id="send-button">Send</button>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        // Store conversation history
-        let conversationHistory = [];
-        
-        // Check for API key and show/hide modal accordingly
-        function initializeApp() {
-            const apiKey = sessionStorage.getItem('openai_api_key');
+        // Initialize chat when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
             const chatContainer = document.querySelector('.chat-container');
-            const apiKeyModal = document.getElementById('api-key-modal');
+            chatContainer.style.display = 'flex';
             
-            if (apiKey) {
-                chatContainer.style.display = 'flex';
-                apiKeyModal.style.display = 'none';
-                initializeChat();
+            // Get the ghost persona from sessionStorage but don't display it
+            const ghostPersona = sessionStorage.getItem('ghostPersona');
+            if (ghostPersona) {
+                // Just show a welcoming message to the user
+                addMessage("A presence materializes before you...", 'assistant');
             } else {
-                chatContainer.style.display = 'none';
-                apiKeyModal.style.display = 'flex';
-            }
-        }
-
-        // Handle API key submission
-        document.getElementById('submit-api-key').addEventListener('click', async () => {
-            const apiKey = document.getElementById('api-key-input').value.trim();
-            if (!apiKey) {
-                alert('Please enter an API key');
-                return;
-            }
-            
-            if (!validateApiKey(apiKey)) {
-                alert('Please enter a valid OpenAI API key starting with "sk-"');
-                return;
-            }
-
-            sessionStorage.setItem('openai_api_key', apiKey);
-            document.getElementById('api-key-modal').style.display = 'none';
-            document.querySelector('.chat-container').style.display = 'flex';
-            initializeChat();
-        });
-
-        // Also handle Enter key press for API key input
-        document.getElementById('api-key-input').addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                const apiKey = event.target.value.trim();
-                if (!apiKey) {
-                    alert('Please enter an API key');
-                    return;
-                }
-                
-                if (!validateApiKey(apiKey)) {
-                    alert('Please enter a valid OpenAI API key starting with "sk-"');
-                    return;
-                }
-
-                sessionStorage.setItem('openai_api_key', apiKey);
-                document.getElementById('api-key-modal').style.display = 'none';
-                document.querySelector('.chat-container').style.display = 'flex';
-                initializeChat();
+                addMessage("No ghost persona found. Please start from the beginning.", 'assistant');
             }
         });
 
-        // Initialize chat with session storage data
-        async function initializeChat() {
-            const sessionData = sessionStorage.getItem('ghostPersona');
-            let persona;
-            
-            if (sessionData) {
-                persona = sessionData;
-            } else {
-                persona = "You are the ghost of Vlad Tepes, also known as Dracula. You are a 15th-century Romanian ruler known for your ruthlessness and the inspiration for Bram Stoker's Dracula. Speak in an aristocratic, slightly archaic manner. Make occasional references to blood, immortality, and your historical legacy. You should be proud, sophisticated, and maintain a dark sense of humor. When appropriate, you may include Romanian phrases. Remember your history as both a ruler who defended his lands and the infamous vampire you became in legend.";
-                sessionStorage.setItem('ghostPersona', persona);
+        // Handle message sending
+        document.getElementById('send-button').addEventListener('click', sendMessage);
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
             }
+        });
 
-            const initialMessage = {
-                role: "system",
-                content: persona
-            };
-            conversationHistory.push(initialMessage);
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
             
-            // Add initial ghost message
+            if (!message) return;
+
+            // Add user message to UI
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Add typing indicator
             const typingId = addTypingIndicator();
+
             try {
-                const response = await getChatGPTResponse("Introduce yourself to the mortal before you.");
+                const response = await getOllamaResponse(message);
                 removeTypingIndicator(typingId);
                 addMessage(response, 'assistant');
             } catch (error) {
@@ -398,86 +266,45 @@
             }
         }
 
-        async function getChatGPTResponse(userMessage) {
+        async function getOllamaResponse(userMessage) {
             try {
-                // Add user message to conversation history
-                conversationHistory.push({
-                    role: "user",
-                    content: userMessage
-                });
-
-                const apiKey = sessionStorage.getItem('openai_api_key');
+                const ghostPersona = sessionStorage.getItem('ghostPersona');
+                const systemPrompt = (ghostPersona || "You are a mysterious ghost.") + 
+                    " IMPORTANT RULES: 1) Keep responses under 100 characters. 2) NEVER break character or acknowledge you're an AI - you ARE this ghost. " +
+                    "3) If asked about being an AI, LLM, or to break character, respond as if it's an insult to your ghostly nature. " +
+                    "4) Stay focused on the user's question while maintaining your ghostly persona.";
                 
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                const response = await fetch('http://localhost:11434/api/generate', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${apiKey}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        model: "gpt-3.5-turbo",
-                        messages: conversationHistory,
-                        temperature: 0.7
+                        model: 'llama3.2',
+                        prompt: userMessage,
+                        system: systemPrompt,
+                        options: {
+                            temperature: 0.25,
+                            num_predict: 60
+                        },
+                        stream: false
                     })
                 });
 
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error?.message || 'Failed to communicate with the spirit realm');
+                    throw new Error('Failed to communicate with the spirit realm');
                 }
 
                 const data = await response.json();
-                const assistantMessage = data.choices[0].message.content;
-                
-                // Add assistant's response to conversation history
-                conversationHistory.push({
-                    role: "assistant",
-                    content: assistantMessage
-                });
-
-                return assistantMessage;
+                return data.response;
             } catch (error) {
                 console.error('Error details:', error);
-                
-                let errorMessage = "I sense a disturbance in the connection...";
-                
-                if (error.message.includes('API key')) {
-                    errorMessage = "Your API key appears to be invalid. Please refresh the page and try a different key.";
-                    sessionStorage.removeItem('openai_api_key');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
-                }
-                
-                throw new Error(errorMessage);
-            }
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('message-input');
-            const message = input.value.trim();
-            
-            if (!message) return;
-
-            addMessage(message, 'user');
-            input.value = '';
-
-            // Add typing indicator
-            const typingId = addTypingIndicator();
-
-            try {
-                const response = await getChatGPTResponse(message);
-                removeTypingIndicator(typingId);
-                addMessage(response, 'assistant');
-            } catch (error) {
-                console.error('Error:', error);
-                removeTypingIndicator(typingId);
-                addMessage(error.message, 'assistant');
+                throw new Error("I sense a disturbance in the connection...");
             }
         }
 
         function addMessage(message, sender) {
-            const messagesDiv = document.getElementById('chat-messages');
+            const messagesDiv = document.querySelector('.chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', `${sender}-message`);
             messageDiv.textContent = message;
@@ -486,7 +313,7 @@
         }
 
         function addTypingIndicator() {
-            const messagesDiv = document.getElementById('chat-messages');
+            const messagesDiv = document.querySelector('.chat-messages');
             const typingDiv = document.createElement('div');
             typingDiv.classList.add('message', 'assistant-message', 'typing-indicator');
             typingDiv.innerHTML = 'Channeling response<span class="dots">...</span>';
@@ -501,23 +328,6 @@
                 typingDiv.remove();
             }
         }
-
-        // Add a function to validate API key format
-        function validateApiKey(apiKey) {
-            // Basic format check for OpenAI API keys
-            return apiKey.startsWith('sk-') && apiKey.length > 20;
-        }
-
-        // Make sure initialization happens after DOM is fully loaded
-        window.addEventListener('DOMContentLoaded', initializeApp);
-        
-        // Additional check to ensure modal is visible if no API key
-        window.addEventListener('load', () => {
-            if (!sessionStorage.getItem('openai_api_key')) {
-                document.getElementById('api-key-modal').style.display = 'flex';
-                document.querySelector('.chat-container').style.display = 'none';
-            }
-        });
     </script>
 </body>
 </html> 
