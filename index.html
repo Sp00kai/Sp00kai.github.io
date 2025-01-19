@@ -190,36 +190,108 @@
             e.preventDefault();
             
             const formData = {
-                beliefScale: document.getElementById('beliefScale').value,
+                beliefScale: parseInt(document.getElementById('beliefScale').value),
                 unexplainedResponse: document.querySelector('input[name="unexplainedResponse"]:checked')?.value,
-                paranormalInterest: document.getElementById('paranormalInterest').value,
+                paranormalInterest: parseInt(document.getElementById('paranormalInterest').value),
                 familyResponse: document.querySelector('input[name="familyResponse"]:checked')?.value,
-                personalConnection: document.getElementById('personalConnection').value,
-                explorationComfort: document.getElementById('explorationComfort').value,
-                scientificBelief: document.getElementById('scientificBelief').value
+                personalConnection: parseInt(document.getElementById('personalConnection').value),
+                explorationComfort: parseInt(document.getElementById('explorationComfort').value),
+                scientificBelief: parseInt(document.getElementById('scientificBelief').value)
             };
 
-            try {
-                const response = await fetch('/submit-assessment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    alert('Assessment submitted successfully!');
-                    // You can add additional handling here for the response
-                } else {
-                    alert('Error submitting assessment. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error submitting assessment. Please try again.');
-            }
+            const results = analyzeGhostPersona(formData);
+            displayResults(results);
         });
+
+        function analyzeGhostPersona(data) {
+            // Calculate different aspects of the ghost persona
+            const skepticismScore = (10 - data.beliefScale + data.scientificBelief) / 2;
+            const fearScore = calculateFearScore(data);
+            const explorationScore = (data.paranormalInterest + data.explorationComfort) / 2;
+            
+            // Determine primary ghost type based on scores
+            const ghostType = determineGhostType(skepticismScore, fearScore, explorationScore);
+            
+            return {
+                ghostType: ghostType,
+                skepticismLevel: skepticismScore.toFixed(1),
+                fearLevel: fearScore.toFixed(1),
+                explorationDrive: explorationScore.toFixed(1),
+                details: generatePersonaDetails(ghostType)
+            };
+        }
+
+        function calculateFearScore(data) {
+            let score = 5; // baseline
+            if (data.unexplainedResponse === 'D') score += 3;
+            if (data.unexplainedResponse === 'C') score += 1;
+            if (data.familyResponse === 'D') score += 2;
+            return Math.min(10, score);
+        }
+
+        function determineGhostType(skepticism, fear, exploration) {
+            if (skepticism > 7) return "The Scientific Skeptic";
+            if (fear > 7) return "The Cautious Observer";
+            if (exploration > 7) return "The Ghost Hunter";
+            if (skepticism < 3 && exploration > 5) return "The True Believer";
+            if (fear < 3 && exploration > 6) return "The Fearless Explorer";
+            return "The Balanced Investigator";
+        }
+
+        function generatePersonaDetails(ghostType) {
+            const details = {
+                "The Scientific Skeptic": "You approach the paranormal with logic and reason. Your first instinct is to seek rational explanations for supernatural phenomena.",
+                "The Cautious Observer": "While you're open to the possibility of the supernatural, you prefer to maintain a safe distance. Safety first!",
+                "The Ghost Hunter": "You're drawn to the mysterious and unknown. You actively seek out paranormal experiences and evidence.",
+                "The True Believer": "You have a strong connection to the supernatural world and trust in the reality of paranormal phenomena.",
+                "The Fearless Explorer": "Nothing scares you when it comes to the paranormal. You're ready to face any ghostly encounter head-on.",
+                "The Balanced Investigator": "You maintain a healthy balance between skepticism and belief, approaching the paranormal with an open mind."
+            };
+            return details[ghostType];
+        }
+
+        function displayResults(results) {
+            // Create and style a modal to display results
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #2d2d2d;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+                border: 1px solid rgba(0, 255, 255, 0.1);
+                max-width: 600px;
+                width: 90%;
+                z-index: 1000;
+            `;
+
+            modal.innerHTML = `
+                <h2 style="color: #00ffff; text-align: center; margin-bottom: 20px;">Your Ghost Persona</h2>
+                <h3 style="color: #00ffff; text-align: center; margin-bottom: 20px;">🏷️ ${results.ghostType}</h3>
+                <p style="color: #fff; margin-bottom: 20px;">${results.details}</p>
+                <div style="color: #00ffff; margin-bottom: 10px;">
+                    🔍 Skepticism Level: ${results.skepticismLevel}/10<br>
+                    😨 Fear Level: ${results.fearLevel}/10<br>
+                    🔦 Exploration Drive: ${results.explorationDrive}/10
+                </div>
+                <button onclick="this.parentElement.remove()" style="
+                    background-color: #1f3333;
+                    color: #00ffff;
+                    border: 1px solid rgba(0, 255, 255, 0.2);
+                    padding: 10px 20px;
+                    border-radius: 25px;
+                    cursor: pointer;
+                    display: block;
+                    margin: 20px auto 0;
+                    width: 150px;
+                ">Close</button>
+            `;
+
+            document.body.appendChild(modal);
+        }
     </script>
 </body>
 </html> 
