@@ -177,12 +177,32 @@
     </div>
 
     <script>
-        // Update range value displays
+        // Update range value displays and track form completion
+        const submitButton = document.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.style.opacity = '0.5';
+        submitButton.style.cursor = 'not-allowed';
+
+        function checkFormCompletion() {
+            const ranges = Array.from(document.querySelectorAll('input[type="range"]'));
+            const radios = Array.from(document.querySelectorAll('input[type="radio"]:checked'));
+            const isComplete = ranges.length === 5 && radios.length === 2;
+            
+            submitButton.disabled = !isComplete;
+            submitButton.style.opacity = isComplete ? '1' : '0.5';
+            submitButton.style.cursor = isComplete ? 'pointer' : 'not-allowed';
+        }
+
         document.querySelectorAll('input[type="range"]').forEach(range => {
             const valueDisplay = document.getElementById(range.id + 'Value');
             range.addEventListener('input', () => {
                 valueDisplay.textContent = range.value;
+                checkFormCompletion();
             });
+        });
+
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', checkFormCompletion);
         });
 
         // Form submission handler
@@ -277,7 +297,7 @@
                     😨 Fear Level: ${results.fearLevel}/10<br>
                     🔦 Exploration Drive: ${results.explorationDrive}/10
                 </div>
-                <button onclick="this.parentElement.remove()" style="
+                <button onclick="window.location.href='ghost_persona.html'" style="
                     background-color: #1f3333;
                     color: #00ffff;
                     border: 1px solid rgba(0, 255, 255, 0.2);
@@ -287,7 +307,7 @@
                     display: block;
                     margin: 20px auto 0;
                     width: 150px;
-                ">Close</button>
+                ">Continue</button>
             `;
 
             document.body.appendChild(modal);
