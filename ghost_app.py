@@ -21,6 +21,43 @@ def index():
 def chat():
     return send_file('chat.html')
 
+@app.route('/submit-assessment', methods=['POST'])
+def submit_assessment():
+    try:
+        # Get the JSON data from the request
+        assessment_data = request.get_json()
+        
+        # Validate required fields
+        required_fields = [
+            'beliefScale', 'unexplainedResponse', 'paranormalInterest',
+            'familyResponse', 'personalConnection', 'explorationComfort',
+            'scientificBelief'
+        ]
+        
+        for field in required_fields:
+            if field not in assessment_data:
+                return jsonify({
+                    'error': f'Missing required field: {field}'
+                }), 400
+        
+        # Convert all values to strings for consistency
+        response_data = {
+            key: str(value) for key, value in assessment_data.items()
+        }
+        
+        # Here you can add additional processing, storage, or analysis of the data
+        # For now, we'll just return the processed data
+        return jsonify({
+            'message': 'Assessment submitted successfully',
+            'data': response_data
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'error': 'Failed to process assessment',
+            'details': str(e)
+        }), 500
+
 def start_server():
     # Get port from environment variable or default to 4000
     port = int(os.environ.get('PORT', 8080))

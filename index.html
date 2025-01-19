@@ -3,31 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghost App</title>
+    <title>Ghost Persona Assessment</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #2d2d2d;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
+            padding: 30px;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            font-size: 24px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .question-group {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #232323;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+            background: #404040;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .radio-option {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .radio-option:hover {
+            background-color: #404040;
+        }
+
+        button {
+            background-color: #1f3333;
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+            width: 200px;
+        }
+
+        button:hover {
+            background-color: #2a4444;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .range-value {
+            text-align: center;
+            color: #00ffff;
+            font-size: 18px;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Ghost App</h1>
-    <p>This is a simple Flask application.</p>
-    
-    <button onclick="runCode()">Run Code</button>
-    <div id="result"></div>
+    <div class="form-container">
+        <div class="form-header">
+            👻 Ghost Persona Assessment
+        </div>
+        <form id="ghostForm">
+            <div class="question-group">
+                <label for="beliefScale">1. On a scale of 1-10, how strongly do you believe in the existence of ghosts?</label>
+                <input type="range" id="beliefScale" name="beliefScale" min="1" max="10" value="5">
+                <div class="range-value" id="beliefScaleValue">5</div>
+            </div>
+
+            <div class="question-group">
+                <label>2. How do you usually respond to unexplained noises or strange occurrences in your home?</label>
+                <div class="radio-option">
+                    <input type="radio" id="response_a" name="unexplainedResponse" value="A">
+                    <label for="response_a">Ignore them; they're probably explainable</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="response_b" name="unexplainedResponse" value="B">
+                    <label for="response_b">Investigate logically or scientifically</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="response_c" name="unexplainedResponse" value="C">
+                    <label for="response_c">Feel nervous but try to rationalize</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="response_d" name="unexplainedResponse" value="D">
+                    <label for="response_d">Get scared and avoid the area</label>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <label for="paranormalInterest">3. How appealing do you find the idea of participating in ghost tours or paranormal investigations?</label>
+                <input type="range" id="paranormalInterest" name="paranormalInterest" min="1" max="10" value="5">
+                <div class="range-value" id="paranormalInterestValue">5</div>
+            </div>
+
+            <div class="question-group">
+                <label>4. If a family member, especially a child, reported seeing a ghost, what would you do?</label>
+                <div class="radio-option">
+                    <input type="radio" id="family_a" name="familyResponse" value="A">
+                    <label for="family_a">Reassure them it's their imagination</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="family_b" name="familyResponse" value="B">
+                    <label for="family_b">Investigate using scientific or logical methods</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="family_c" name="familyResponse" value="C">
+                    <label for="family_c">Take protective actions like spiritual cleansing</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="family_d" name="familyResponse" value="D">
+                    <label for="family_d">Feel panic and take immediate steps to remove the ghost</label>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <label for="personalConnection">5. How much do ghost stories or personal paranormal experiences resonate with you?</label>
+                <input type="range" id="personalConnection" name="personalConnection" min="1" max="10" value="5">
+                <div class="range-value" id="personalConnectionValue">5</div>
+            </div>
+
+            <div class="question-group">
+                <label for="explorationComfort">6. How comfortable are you with actively exploring or investigating paranormal phenomena?</label>
+                <input type="range" id="explorationComfort" name="explorationComfort" min="1" max="10" value="5">
+                <div class="range-value" id="explorationComfortValue">5</div>
+            </div>
+
+            <div class="question-group">
+                <label for="scientificBelief">7. Do you believe all ghost sightings or supernatural events can be explained by science or logical reasoning?</label>
+                <input type="range" id="scientificBelief" name="scientificBelief" min="1" max="10" value="5">
+                <div class="range-value" id="scientificBeliefValue">5</div>
+            </div>
+
+            <button type="submit">Submit 👻</button>
+        </form>
+    </div>
 
     <script>
-        async function runCode() {
+        // Update range value displays
+        document.querySelectorAll('input[type="range"]').forEach(range => {
+            const valueDisplay = document.getElementById(range.id + 'Value');
+            range.addEventListener('input', () => {
+                valueDisplay.textContent = range.value;
+            });
+        });
+
+        // Form submission handler
+        document.getElementById('ghostForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                beliefScale: document.getElementById('beliefScale').value,
+                unexplainedResponse: document.querySelector('input[name="unexplainedResponse"]:checked')?.value,
+                paranormalInterest: document.getElementById('paranormalInterest').value,
+                familyResponse: document.querySelector('input[name="familyResponse"]:checked')?.value,
+                personalConnection: document.getElementById('personalConnection').value,
+                explorationComfort: document.getElementById('explorationComfort').value,
+                scientificBelief: document.getElementById('scientificBelief').value
+            };
+
             try {
-                const response = await fetch('https://sp00kai-github-io.onrender.com/run-code', {
+                const response = await fetch('/submit-assessment', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify(formData)
                 });
-                const data = await response.json();
-                document.getElementById('result').textContent = data.result;
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Assessment submitted successfully!');
+                    // You can add additional handling here for the response
+                } else {
+                    alert('Error submitting assessment. Please try again.');
+                }
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('result').textContent = 'Error executing code';
+                alert('Error submitting assessment. Please try again.');
             }
-        }
+        });
     </script>
 </body>
 </html> 
