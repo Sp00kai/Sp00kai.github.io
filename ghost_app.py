@@ -22,6 +22,8 @@ def run_code():
     if request.method == 'OPTIONS':
         return '', 200
     result = "Python code executed!"
+    app.logger.info(f"Received request: {request.json}")
+    print("Received request: ", request.json)
     return jsonify({'result': result})
 
 def start_server():
